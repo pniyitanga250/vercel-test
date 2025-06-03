@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datopside - #1 MLM in East Africa</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .hero-bg {background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+            
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cta-button {
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            border-color: white;
+        }
+        @keyframes fade-in {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fade-in 1s ease-out;
+        }
+    </style>
+</head>
+<body class="font-sans">
+    <div class="bg-gray-800 text-white py-2">
+        <div class="container mx-auto px-6 flex justify-end space-x-4">
+            <a href="{% url 'login' %}" class="text-white hover:text-blue-400">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </a>
+            <a href="{% url 'register' %}" class="text-white hover:text-blue-400">
+                <i class="fas fa-user-plus"></i> Register
+            </a>
+        </div>
+    </div>
+<body class="font-sans">
+    {% load static %}
+    <!-- Hero Section -->
+    <section class="hero-bg">
+        <div class="container mx-auto px-6 text-center text-white">
+            <img src="{% static 'images/LOGO.png' %}" alt="Datopside Logo" class="mx-auto mb-6 w-32 h-auto" style="animation: rotate3dLogo 5s infinite linear;">
+            <style>
+                @keyframes rotate3dLogo {
+                    0% {
+                        transform: rotate3d(0, 1, 0, 0deg);
+                    }
+                    100% {
+                        transform: rotate3d(0, 1, 0, 360deg);
+                    }
+                }
+            </style>
+            <h1 class="text-6xl font-bold mb-6 animate-fade-in">Welcome to Datopside</h1>
+            <h2 class="text-4xl mb-8 animate-fade-in">The #1 All-In-One MLM Company in East Africa</h2>
+            <p class="text-xl mb-12 max-w-2xl mx-auto">
+                Join our network of successful entrepreneurs and transform your financial future today.
+            </p>
+            <div class="space-x-4">
+                <a href="{% url 'about' %}" class="cta-button bg-blue-600 text-white px-8 py-4 rounded-full text-lg font-semibold">
+                    About Us
+                </a>
+                <a href="{% url 'register' %}" class="cta-button bg-green-600 text-white px-8 py-4 rounded-full text-lg font-semibold">
+                    Join Now
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="py-20 bg-gray-100">
+
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-12">Why Choose Datopside?</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-lg shadow-lg text-center">
+                    <h3 class="text-2xl font-bold mb-4">Proven Success</h3>
+                    <p class="text-gray-600">With thousands of success stories, we've helped people achieve financial freedom.</p>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-lg text-center">
+                    <h3 class="text-2xl font-bold mb-4">Comprehensive Training</h3>
+                    <p class="text-gray-600">We provide complete training and support to ensure your success.</p>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-lg text-center">
+                    <h3 class="text-2xl font-bold mb-4">Cutting-edge Products</h3>
+                    <p class="text-gray-600">Our products are innovative, high-quality, and in-demand.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Join Section -->
+    <section class="py-20 bg-blue-600 text-white">
+
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-4xl font-bold mb-8">Ready to Transform Your Life?</h2>
+            <p class="text-xl mb-12 max-w-2xl mx-auto">
+                Take the first step towards financial freedom. Join our network of successful entrepreneurs today.
+            </p>
+            <a href="{% url 'register' %}" class="cta-button bg-white text-blue-600 px-12 py-4 rounded-full text-lg font-semibold">
+                Get Started Now
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-6 text-center">
+            <div class="flex justify-center space-x-6 mb-4">
+                <a href="{% url 'login' %}" class="text-white hover:text-blue-400">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </a>
+                <a href="{% url 'register' %}" class="text-white hover:text-blue-400">
+                    <i class="fas fa-user-plus"></i> Register
+                </a>
+                <a href="{% url 'home' %}" class="text-white hover:text-blue-400">
+                    <i class="fas fa-home"></i> Home
+                </a>
+            </div>
+
+            <div class="space-y-2">
+                <p><i class="fas fa-envelope"></i> pniyitanga27@gmail.com</p>
+                <p><i class="fas fa-phone"></i> +250 7804 75093</p>
+                <p><i class="fas fa-map-marker-alt"></i> Kigali, Rwanda</p>
+            </div>
+
+            <p class="mt-4">&copy; 2023 Datopside. All rights reserved.</p>
+            <p class="mt-2">The #1 MLM Company in East Africa</p>
+        </div>
+    </footer>
+
+</body>
+</html>

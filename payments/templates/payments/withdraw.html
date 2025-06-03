@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Withdraw Funds{% endblock %}
+{% block extra_css %}
+<style>
+  /* Overall body background styling */
+  body {
+    background-image: url('{% static "images/withdraw2.jpg" %}');
+    background-size: cover;
+    font-family: "Poppins", sans-serif;
+    color: #333;
+  }
+  
+  /* Full-page background image from static withdraw.jpg */
+  .full-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+  }
+  
+  /* Content overlay styling */
+  .content-overlay {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 0.5rem;
+    padding: 30px;
+    margin-top: 30px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Ensure the navbar (dropdown container) stays on top */
+  .navbar {
+    z-index: 1050 !important;  /* Adjust this if your base template uses a different z-index */
+  }
+</style>
+{% endblock extra_css %}
+
+{% block content %}
+<div class="full-bg"></div>
+<div class="container mt-5" style="max-width: 800px; margin: auto;">
+  <div class="row justify-content-center">
+    <div class="col-md-10 content-overlay">
+      <!-- Withdrawal Request Card -->
+      <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-primary text-white" style="border-radius: 0.5rem;">
+          <h3 class="mb-0">Withdrawal Request</h3>
+        </div>
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-3">
+            <i class="fas fa-wallet text-success me-2" style="font-size: 1.5rem;"></i>
+            <p class="lead mb-0">Available Balance: <strong class="text-success">${{ available_balance }}</strong></p>
+          </div>
+          <p class="text-muted small">Withdrawal sent to: <strong>{{ request.user.phone_number }}</strong></p>
+          
+          {% if pending_exists %}
+            <div class="alert alert-warning" style="border-radius: 0.5rem;">
+              You already have a pending withdrawal request. Please wait until it is processed before submitting a new request.
+            </div>
+          {% else %}
+            {% if available_balance < 10 %}
+              <div class="alert alert-info">
+                You must have at least $10 available to make a withdrawal.
+              </div>
+            {% else %}
+              <form method="post" id="withdrawForm">
+                {% csrf_token %}
+                <div class="mb-3">
+                  <label for="amount" class="form-label">Withdrawal Amount (Minimum $10):</label>
+                  <input type="number" class="form-control" name="amount" id="amount" step="0.01" min="10" max="{{ available_balance }}" required>
+                </div>
+                <button type="submit" class="btn btn-success" style="background: linear-gradient(90deg, #28a745, #218838);">Request Withdrawal</button>
+              </form>
+            {% endif %}
+          {% endif %}
+        </div>
+      </div>
+      <!-- Withdrawal History Card -->
+      <div class="card shadow-sm">
+        <div class="card-header bg-secondary text-white">
+          <h4 class="mb-0">Withdrawal History</h4>
+        </div>
+        <div class="card-body">
+          {% if withdrawals %}
+            <div class="table-responsive" style="border-radius: 0.5rem; overflow: hidden;">
+              <table class="table table-bordered table-striped" style="border-radius: 0.5rem;">
+                <thead>
+                  <tr>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Requested At</th>
+                    <th>Processed At</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for w in withdrawals %}
+                    <tr>
+                      <td>${{ w.amount }}</td>
+                      <td>
+                        {% if w.status == "pending" %}
+                          <span class="badge bg-warning text-dark" style="border-radius: 0.5rem;">{{ w.get_status_display }}</span>
+                        {% elif w.status == "completed" %}
+                          <span class="badge bg-success" style="border-radius: 0.5rem;">{{ w.get_status_display }}</span>
+                        {% elif w.status == "declined" %}
+                          <span class="badge bg-danger" style="border-radius: 0.5rem;">{{ w.get_status_display }}</span>
+                        {% else %}
+                          {{ w.get_status_display }}
+                        {% endif %}
+                      </td>
+                      <td>{{ w.requested_at|date:"Y-m-d H:i" }}</td>
+                      <td>
+                        {% if w.processed_at %}
+                          {{ w.processed_at|date:"Y-m-d H:i" }}
+                        {% else %}
+                          -
+                        {% endif %}
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <p class="text-muted">No withdrawal history available.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JavaScript for dynamic input handling -->
+{% block extra_js %}{% endblock %}
+<script>
+  document.addEventListener("DOMContentLoaded", function(){
+    const amountInput = document.getElementById('amount');
+    if(amountInput) {
+      amountInput.addEventListener('input', function(){
+        let entered = parseFloat(this.value) || 0;
+        let max = parseFloat(this.max);
+        if(entered > max) {
+          this.value = max;
+        }
+      });
+    }
+  });
+</script>
+{% endblock %}

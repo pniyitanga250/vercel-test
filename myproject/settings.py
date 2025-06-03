@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-wa^9wg1%p0#p)pws_px4_6#-94txoxac%pxf035gorjv6rygk)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['.vercel.app', 'localhost', ]
+ALLOWED_HOSTS = ['.vercel.app', 'localhost', '127.0.0.1' ]
 
 
 # Application definition
@@ -39,7 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'hello',
+    'myapp',
+    'products',
+    'payments',
+    'tools_and_opps',
+    
 ]
 
 MIDDLEWARE = [
@@ -129,3 +133,5 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+AUTH_USER_MODEL = 'myapp.User'
+MEDIA_URL = '/media/'

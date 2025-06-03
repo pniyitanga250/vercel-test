@@ -1,0 +1,43 @@
+{% for transaction in transactions %}
+<tr>
+  <td>{{ transaction.timestamp|date:"M d, Y H:i" }}</td>
+  <td>
+    {% if transaction.transaction_type == "REFERRAL_EARNINGS" %}
+      <span class="badge bg-info">Referral</span>
+    {% elif transaction.transaction_type == "RETAIL_BONUS" %}
+      <span class="badge bg-success">Retail</span>
+    {% elif transaction.transaction_type == "LEADERSHIP_BONUS" %}
+      <span class="badge bg-warning text-dark">Leadership</span>
+    {% elif transaction.transaction_type == "MATCHING_BONUS" %}
+      <span class="badge bg-secondary">Matching</span>
+    {% else %}
+      <span class="badge bg-light text-dark">{{ transaction.get_transaction_type_display }}</span>
+    {% endif %}
+  </td>
+  <td>
+    {% if transaction.transaction_type == "REFERRAL_EARNINGS" %}
+      Direct Referral Bonus
+    {% elif transaction.transaction_type == "RETAIL_BONUS" %}
+      Retail Bonus Award
+    {% elif transaction.transaction_type == "LEADERSHIP_BONUS" %}
+      Leadership Bonus Award
+    {% elif transaction.transaction_type == "MATCHING_BONUS" %}
+      Matching Bonus Award
+    {% else %}
+      {{ transaction.get_transaction_type_display }}
+    {% endif %}
+  </td>
+  <td><strong>${{ transaction.amount }}</strong></td>
+  <td>
+    {{ transaction.description }}
+    {% if transaction.audit %}
+      <br>
+      <small class="text-muted">Audit: {{ transaction.audit.details }}</small>
+    {% endif %}
+  </td>
+</tr>
+{% empty %}
+<tr>
+  <td colspan="5" class="text-center">No transactions found.</td>
+</tr>
+{% endfor %}

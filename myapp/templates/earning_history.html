@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5 p-4" style="background: rgba(255,255,255,0.95); border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+  <h2 class="text-center mb-4">Earning History</h2>
+  <!-- Search Input (responds as user types) -->
+  <div class="row mb-4">
+    <div class="col-md-8 offset-md-2">
+      <input type="text" name="search" class="form-control" placeholder="Search transactions..." value="{{ request.GET.search }}">
+    </div>
+  </div>
+  <!-- Transaction List -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-gradient-primary text-white">
+      <h5 class="mb-0"><i class="fas fa-history"></i> Transaction History</h5>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Date</th>
+              <th>Type</th>
+              <th>Bonus Award</th>
+              <th>Amount</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody id="transactionTableBody">
+            {% for transaction in transactions %}
+            <tr>
+              <td>{{ transaction.timestamp|date:"M d, Y H:i" }}</td>
+              <td>
+                {% if transaction.transaction_type == "REFERRAL_EARNINGS" %}
+                  <span class="badge bg-info">Referral</span>
+                {% elif transaction.transaction_type == "RETAIL_BONUS" %}
+                  <span class="badge bg-success">Retail</span>
+                {% elif transaction.transaction_type == "LEADERSHIP_BONUS" %}
+                  <span class="badge bg-warning text-dark">Leadership</span>
+                {% elif transaction.transaction_type == "MATCHING_BONUS" %}
+                  <span class="badge bg-secondary">Matching</span>
+                {% else %}
+                  <span class="badge bg-light text-dark">{{ transaction.get_transaction_type_display }}</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if transaction.transaction_type == "REFERRAL_EARNINGS" %}
+                  Direct Referral Bonus
+                {% elif transaction.transaction_type == "RETAIL_BONUS" %}
+                  Retail Bonus Award
+                {% elif transaction.transaction_type == "LEADERSHIP_BONUS" %}
+                  Leadership Bonus Award
+                {% elif transaction.transaction_type == "MATCHING_BONUS" %}
+                  Matching Bonus Award
+                {% else %}
+                  {{ transaction.get_transaction_type_display }}
+                {% endif %}
+              </td>
+              <td><strong>${{ transaction.amount }}</strong></td>
+              <td>
+                {{ transaction.description }}
+                {% if transaction.audit %}
+                  <br>
+                  <small class="text-muted">Audit: {{ transaction.audit.details }}</small>
+                {% endif %}
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="5" class="text-center">No transactions found.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card-footer text-end text-muted">
+      Total Transactions: {{ transactions|length }}
+    </div>
+  </div>
+</div>
+
+<style>
+    body {
+        background-image: url('{% static "images/deposit.jpg" %}');
+        background-size: cover;
+        font-family: "Poppins", sans-serif;
+        color: #333;
+      }
+  .container {
+    background: rgba(34, 73, 211, 0.95);
+    border-radius: 12px;
+    padding: 2rem;
+  }
+  .bg-gradient-primary {
+    background: linear-gradient(45deg, #1d2671, #c33764) !important;
+  }
+  input[name="search"] {
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+  }
+</style>
+
+<script>
+  function debounce(func, wait) {
+    let timeout;
+    return function(...args) {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+  }
+  const searchInput = document.querySelector('input[name="search"]');
+  const updateTable = debounce(function() {
+    const query = searchInput.value;
+    fetch(`{% url 'earning_history_ajax' %}?search=${encodeURIComponent(query)}`, {
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(response => response.text())
+    .then(html => {
+      document.getElementById('transactionTableBody').innerHTML = html;
+    })
+    .catch(err => console.error(err));
+  }, 300);
+  searchInput.addEventListener('input', updateTable);
+</script>
+{% endblock content %}

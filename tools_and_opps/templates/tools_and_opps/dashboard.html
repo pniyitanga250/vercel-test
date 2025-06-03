@@ -1,0 +1,302 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    /* Overall body styling */
+    body {
+        background-image: url('{% static "images/tools.jpg" %}');
+        background-size: cover;
+        font-family: "Poppins", sans-serif;
+        color: #333;
+        margin: 0;
+        padding: 0;
+    }
+    /* Dashboard Header */
+    .dashboard-header {
+        background: rgba(255,255,255,0.9);
+        padding: 20px;
+        border-bottom: 2px solid #007bff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+    .dashboard-header h1 {
+        margin: 0;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #007bff;
+    }
+    /* Tabs Navigation Styling */
+    .tools-tabs .nav-link {
+        color: #fff;
+        background-color: #343a40;
+        border: 1px solid #495057;
+        margin-right: 5px;
+        font-weight: 600;
+        transition: background-color 0.3s;
+    }
+    .tools-tabs .nav-link.active,
+    .tools-tabs .nav-link:hover {
+        color: #fff;
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+    /* Content Panel Styling */
+    .tab-content {
+        background-color: #ffffff;
+        border: 1px solid #dee2e6;
+        padding: 30px;
+        border-radius: 10px;
+        margin-top: 20px;
+    }
+    /* List Group Styling */
+    .list-group-item {
+        border: none;
+        border-bottom: 1px solid #dee2e6;
+        padding: 15px;
+        transition: background-color 0.3s;
+    }
+    .list-group-item:hover {
+        background-color: #f1f1f1;
+    }
+    /* Card Styling */
+    .card {
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        transition: transform 0.3s, box-shadow 0.3s;
+        border: none;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+    .card-img-top {
+        object-fit: cover;
+        height: 200px;
+    }
+    .card-title i {
+        margin-right: 8px;
+    }
+    /* Metadata Styling */
+    .meta-info {
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+    .meta-info i {
+        margin-right: 3px;
+    }
+    /* Download Button Styling */
+    .download-btn {
+        font-size: 1rem;
+    }
+    /* Social Platform Icon Styling */
+    .social-icon {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+        border-radius: 50%;
+        margin-right: 15px;
+    }
+    /* Modal Styling (for other sections if needed) */
+    .modal-body img, .modal-body iframe {
+        width: 100%;
+    }
+</style>
+{% endblock extra_css %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="dashboard-header text-center">
+        <h1><i class="bi bi-speedometer2"></i> Tools & OPPs Dashboard</h1>
+    </div>
+    <!-- Tabs Navigation -->
+    <ul class="nav nav-tabs tools-tabs mb-4" id="toolsTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="social-tab" data-bs-toggle="tab" data-bs-target="#social" type="button" role="tab" aria-controls="social" aria-selected="true">
+                <i class="bi bi-people-fill"></i> Social Platforms
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="training-tab" data-bs-toggle="tab" data-bs-target="#training" type="button" role="tab" aria-controls="training" aria-selected="false">
+                <i class="bi bi-book-half"></i> Training Documents
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="video-tab" data-bs-toggle="tab" data-bs-target="#video" type="button" role="tab" aria-controls="video" aria-selected="false">
+                <i class="bi bi-camera-video"></i> Video Materials
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="advertisement-tab" data-bs-toggle="tab" data-bs-target="#advertisement" type="button" role="tab" aria-controls="advertisement" aria-selected="false">
+                <i class="bi bi-megaphone"></i> Advertisement Materials
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="youtube-tab" data-bs-toggle="tab" data-bs-target="#youtube" type="button" role="tab" aria-controls="youtube" aria-selected="false">
+                <i class="bi bi-youtube"></i> YouTube Links
+            </button>
+        </li>
+    </ul>
+    <!-- Tabs Content -->
+    <div class="tab-content" id="toolsTabContent">
+        <!-- Social Platforms -->
+        <div class="tab-pane fade show active" id="social" role="tabpanel" aria-labelledby="social-tab">
+            {% if social_platforms %}
+                <div class="list-group">
+                    {% for platform in social_platforms %}
+                        <a href="{{ platform.url }}" target="_blank" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                {% if platform.icon %}
+                                    <img src="{{ platform.icon.url }}" alt="{{ platform.name }} Icon" class="social-icon">
+                                {% else %}
+                                    <i class="bi bi-link-45deg fs-3 me-3"></i>
+                                {% endif %}
+                                <div>
+                                    <h5 class="mb-1">{{ platform.name }}</h5>
+                                    {% if platform.description %}
+                                        <p class="mb-1">{{ platform.description }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <i class="bi bi-arrow-up-right-square"></i>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>No social platforms available.</p>
+            {% endif %}
+        </div>
+        <!-- Training Documents -->
+        <div class="tab-pane fade" id="training" role="tabpanel" aria-labelledby="training-tab">
+            {% if training_documents %}
+                <div class="list-group">
+                    {% for document in training_documents %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="mb-1"><i class="bi bi-file-earmark-text"></i> {{ document.title }}</h5>
+                                {% if document.uploaded_at %}
+                                    <small class="meta-info" data-bs-toggle="tooltip" title="Uploaded on {{ document.uploaded_at|date:'M d, Y' }}">
+                                        <i class="bi bi-calendar"></i> {{ document.uploaded_at|date:"M d, Y" }}
+                                    </small>
+                                {% endif %}
+                                {% if document.description %}
+                                    <p class="mb-1">{{ document.description }}</p>
+                                {% endif %}
+                            </div>
+                            <a href="{% url 'tools_and_opps:download_document' document.id %}" class="btn btn-outline-primary btn-sm download-btn">
+                                Download <i class="bi bi-download"></i>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>No training documents available.</p>
+            {% endif %}
+        </div>
+        <!-- Video Materials -->
+        <div class="tab-pane fade" id="video" role="tabpanel" aria-labelledby="video-tab">
+            {% if video_materials %}
+                <div class="list-group">
+                    {% for video in video_materials %}
+                        <a href="{{ video.video_url }}" target="_blank" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="mb-1"><i class="bi bi-play-circle-fill"></i> {{ video.title }}</h5>
+                                {% if video.uploaded_at %}
+                                    <small class="meta-info" data-bs-toggle="tooltip" title="Uploaded on {{ video.uploaded_at|date:'M d, Y' }}">
+                                        <i class="bi bi-calendar"></i> {{ video.uploaded_at|date:"M d, Y" }}
+                                    </small>
+                                {% endif %}
+                                {% if video.description %}
+                                    <p class="mb-1">{{ video.description }}</p>
+                                {% endif %}
+                            </div>
+                            <span class="preview-icon" data-bs-toggle="modal" data-bs-target="#videoModal{{ forloop.counter }}" title="Preview Video">
+                                <i class="bi bi-eye-fill"></i>
+                            </span>
+                        </a>
+                        <!-- Modal for Video Preview -->
+                        <div class="modal fade" id="videoModal{{ forloop.counter }}" tabindex="-1" aria-labelledby="videoModalLabel{{ forloop.counter }}" aria-hidden="true">
+                          <div class="modal-dialog modal-lg modal-dialog-centered">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="videoModalLabel{{ forloop.counter }}">{{ video.title }} Preview</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                <div class="ratio ratio-16x9">
+                                    <iframe src="{{ video.video_url }}" frameborder="0" allowfullscreen></iframe>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>No video materials available.</p>
+            {% endif %}
+        </div>
+        <!-- Advertisement Materials -->
+        <div class="tab-pane fade" id="advertisement" role="tabpanel" aria-labelledby="advertisement-tab">
+            {% if advertisement_materials %}
+            <div class="row">
+                {% for ad in advertisement_materials %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <img src="{{ ad.image.url }}" class="card-img-top" alt="{{ ad.title }}">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="bi bi-image"></i> {{ ad.title }}</h5>
+                                {% if ad.uploaded_at %}
+                                    <small class="meta-info" data-bs-toggle="tooltip" title="Uploaded on {{ ad.uploaded_at|date:'M d, Y' }}">
+                                        <i class="bi bi-calendar"></i> {{ ad.uploaded_at|date:"M d, Y" }}
+                                    </small>
+                                {% endif %}
+                                {% if ad.description %}
+                                    <p class="card-text">{{ ad.description }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="card-footer text-end">
+                                <a href="{{ ad.image.url }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                    View Full Image <i class="bi bi-arrow-up-right-square"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            {% else %}
+                <p>No advertisement materials available.</p>
+            {% endif %}
+        </div>
+        <!-- YouTube Links -->
+        <div class="tab-pane fade" id="youtube" role="tabpanel" aria-labelledby="youtube-tab">
+            {% if youtube_links %}
+                <div class="list-group">
+                    {% for yt in youtube_links %}
+                        <a href="{{ yt.url }}" target="_blank" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="mb-1"><i class="bi bi-youtube"></i> {{ yt.title }}</h5>
+                                {% if yt.description %}
+                                    <p class="mb-1">{{ yt.description }}</p>
+                                {% endif %}
+                            </div>
+                            <i class="bi bi-arrow-up-right-square"></i>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>No YouTube links available.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Initialize Bootstrap tooltips -->
+<script>
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    });
+</script>
+{% endblock content %}

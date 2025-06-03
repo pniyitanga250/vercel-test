@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}<i class="fas fa-shopping-bag me-1"></i>Payment History<i class="fas fa-shopping-bag ms-1"></i>{% endblock %}
+
+{% block extra_css %}{% endblock %}
+{% block content %}
+<div class="container mt-5 py-4 px-4 payment-history-container">
+    <h1 class="mb-4 text-center" style="color:rgb(183, 193, 95);">Payment History</h1>
+    
+    {% if payments %}
+    <div class="table-responsive {% if payments|length >= 10 %}scrollable{% endif %}">
+        <table class="table table-striped table-hover align-middle table-sm">
+            <thead class="table-dark">
+                <tr>
+                    <th scope="col"><i class="fas fa-hashtag me-1"></i> Transaction ID</th>
+                    <th scope="col"><i class="fas fa-calendar-alt me-1"></i> Date</th>
+                    <th scope="col"><i class="fas fa-box-open me-1"></i> Product</th>
+                    <th scope="col"><i class="fas fa-dollar-sign me-1"></i> Amount</th>
+                    <th scope="col"><i class="fas fa-credit-card me-1"></i> Payment Method</th>
+                    <th scope="col"><i class="fas fa-info-circle me-1"></i> Status</th>
+                    <th scope="col"><i class="fas fa-sync-alt me-1"></i> Updated At</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for payment in payments %}
+                <tr>
+                    <td>{{ payment.transaction_id }}</td>
+                    <td>{{ payment.created_at|date:"M d, Y H:i" }}</td>
+                    <td>{{ payment.product.name }}</td>
+                    <td>${{ payment.amount }}</td>
+                    <td>{{ payment.get_payment_method_display }}</td>
+                    <td>
+                        {% if payment.status == 'completed' or payment.status == 'delivered' %}
+                            <span class="badge bg-success">{{ payment.status|title }}</span>
+                        {% elif payment.status == 'cancelled' %}
+                            <span class="badge bg-danger">{{ payment.status|title }}</span>
+                        {% else %}
+                            <span class="badge bg-warning">{{ payment.status|title }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ payment.updated_at|date:"M d, Y H:i" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center">
+        <i class="fas fa-info-circle me-1"></i> You haven't made any payments yet.
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    /* Overall body background styling */
+    body {
+        background-image: url('{% static "images/withdraw2.jpg" %}');
+        background-size: cover;
+        font-family: "Poppins", sans-serif;
+        color: #333;
+    }
+    
+    /* Card-like container styling */
+    .payment-history-container {
+        max-width: 800px;
+        margin: auto;
+        background-color: rgba(255,255,255,0.95);
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        padding: 20px;
+    }
+
+    h1 {
+        font-family: 'Arial', sans-serif;
+        font-weight: bold;
+        color: #333333;
+    }
+    
+    /* Table styling */
+    .table {
+        margin-bottom: 0;
+    }
+    .table th, .table td {
+        text-align: center;
+        vertical-align: middle;
+    }
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: #f9f9f9;
+    }
+    .table-hover tbody tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    /* Badge Colors */
+    .badge.bg-success {
+        background-color: #28a745;
+    }
+    .badge.bg-warning {
+        background-color: #ffc107;
+    }
+    .badge.bg-danger {
+        background-color: #dc3545;
+    }
+    .alert-info {
+        background-color: #e9ecef;
+        color: #0c5460;
+        border: 1px solid #bee5eb;
+    }
+
+    /* Scrollable table container for 10+ payments */
+    .scrollable {
+        max-height: 400px; /* Adjust height as needed */
+        overflow-y: auto;
+    }
+
+    /* Sticky table header */
+    .table-responsive .table thead th {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+    }
+</style>
+{% endblock %}

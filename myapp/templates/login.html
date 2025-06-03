@@ -1,0 +1,134 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg,rgb(109, 32, 198), #cfd8dc);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      padding: 10px;
+    }
+    .container {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      width: 100%;
+      max-width: 350px;
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+    .container:hover {
+      transform: translateY(-5px);
+    }
+    h2 {
+      margin-bottom: 25px;
+      color: #333;
+      font-weight: 500;
+    }
+    h2 .fa-lock {
+      margin-right: 8px;
+      color: #007bff;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #555;
+      text-align: left;
+    }
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-sizing: border-box;
+      transition: border-color 0.3s ease;
+    }
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #007bff;
+      border: none;
+      border-radius: 5px;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+    button:hover {
+      background-color: #0056b3;
+      transform: translateY(-2px);
+    }
+    p {
+      margin-top: 20px;
+      color: #555;
+    }
+    a {
+      color: #007bff;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .alert {
+      margin-top: 15px;
+      font-size: 0.9rem;
+    }
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px;
+      }
+      h2 {
+        font-size: 24px;
+      }
+      button {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%);">
+    <img src="{% static 'images/LOGO.png' %}" alt="Company Logo" style="max-width: 100px;">
+  </div>
+  <div class="container">
+    <h2><i class="fas fa-lock"></i> Login</h2>
+    <form method="POST">
+      {% csrf_token %}
+      <label for="username">Username:</label>
+      <input type="text" name="username" id="username" required>
+      <label for="password">Password:</label>
+      <input type="password" name="password" id="password" required>
+      <button type="submit">Login</button>
+      {% if error_message %}
+        <p style="color: red;">{{ error_message }}</p>
+      {% endif %}
+    </form>
+    {% for message in messages %}
+      <div class="alert alert-info">{{ message }}</div>
+    {% endfor %}
+    <p>Don't have an account? <a href="{% url 'register' %}">Register here</a></p>
+  </div>
+</body>
+</html>

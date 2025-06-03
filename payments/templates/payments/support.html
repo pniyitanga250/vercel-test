@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+  /* Overall body background styling */
+    body {
+    background-image: url('{% static "images/whatsapp1.jpg" %}');
+    background-size: cover;
+    font-family: "Poppins", sans-serif;
+    color: #333;
+  }
+
+  /* Container for the chat */
+  .chat-container {
+    max-width: 800px;
+    height: 800px;
+    margin: 0 auto;
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  /* Chat messages area */
+  .chat-messages {
+    height: 600px;
+    overflow-y: scroll;
+    padding: 10px;
+    background:rgb(179, 104, 28);
+    border-radius: 10px;
+  }
+  /* Message block styling */
+  .message {
+    margin: 10px 0;
+    display: flex;
+    flex-direction: column;
+  }
+  /* Align user messages (sender) to the right */
+  .message.user-message {
+    align-items: flex-end;
+  }
+  /* Align admin replies to the left */
+  .message.admin-reply {
+    align-items: flex-start;
+  }
+  /* Bubble style for messages */
+  .bubble {
+    padding: 10px 15px;
+    border-radius: 20px;
+    max-width: 75%;
+    font-size: 14px;
+    position: relative;
+    word-wrap: break-word;
+  }
+  .bubble.user {
+    background: #dcf8c6;
+    color: #000;
+    border-bottom-right-radius: 0;
+  }
+  .bubble.admin {
+    background: #fff;
+    color: #000;
+    border-bottom-left-radius: 0;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  }
+  /* Timestamp styling */
+  .timestamp {
+    font-size: 11px;
+    color: #999;
+    margin-top: 5px;
+  }
+  /* Input container styling */
+  .input-container {
+    display: flex;
+    margin-top: 15px;
+  }
+  .input-container textarea {
+    flex: 1;
+    resize: none;
+    border-radius: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+  }
+  .input-container button {
+    background: #25d366;
+    border: none;
+    color: #fff;
+    padding: 10px 20px;
+    margin-left: 10px;
+    border-radius: 20px;
+    cursor: pointer;
+  }
+  .input-container button:hover {
+    background: #1ebe5a;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container my-5 chat-container">
+  <h2 class="mb-4 text-center">Support Chat</h2>
+  
+  <div id="chatMessages" class="chat-messages">
+    {% if support_messages %}
+      {% for message in support_messages %}
+        <!-- User's Message -->
+        <div class="message user-message">
+          <div class="bubble user">
+            {{ message.content }}
+          </div>
+          <div class="timestamp">
+            You - {{ message.created_at|date:"M d, Y H:i" }}
+          </div>
+        </div>
+        <!-- Admin Reply if exists -->
+        {% if message.admin_reply %}
+        <div class="message admin-reply">
+          <div class="bubble admin">
+            <img src="{% static 'images/LOGO1.jpg' %}" alt="Admin Avatar" class="rounded-circle mr-2" style="width:30px;">
+            {{ message.admin_reply }}
+          </div>
+          <div class="timestamp">
+            Admin - {{ message.reply_at|date:"M d, Y H:i" }}
+          </div>
+        </div>
+        {% endif %}
+      {% endfor %}
+    {% else %}
+      <p class="text-center">No messages yet. Start a conversation!</p>
+    {% endif %}
+  </div>
+
+  <form id="chatForm" method="POST" action="{% url 'support_thread' %}">
+    {% csrf_token %}
+    <div class="input-container">
+      <textarea name="content" id="content" class="form-control" rows="1" placeholder="Type your message..." required></textarea>
+      <button type="submit">Send</button>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Auto-scroll to the latest message on page load.
+  var chatMessages = document.getElementById('chatMessages');
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+
+  // Enable sending the message using Enter (while allowing Shift+Enter for a new line).
+  var textarea = document.getElementById('content');
+  var form = document.getElementById('chatForm');
+  textarea.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      form.submit();
+    }
+  });
+</script>
+{% endblock %}

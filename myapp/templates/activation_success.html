@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Activation Success</title>
+  <style>
+    body {
+      background-color: black;
+      color: #00FF00;
+      font-family: 'Courier New', Courier, monospace;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      text-align: center;
+      margin-top: 10%;
+    }
+    .btn {
+      background-color: #00FF00;
+      color: black;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 5px;
+      margin: 10px;
+      display: inline-block;
+    }
+    .btn:hover {
+      background-color: #00CC00;
+    }
+    .messages {
+      margin-bottom: 20px;
+    }
+    .message {
+      color: #00FF00;
+      font-weight: bold;
+    }
+    .contact-info {
+      margin-top: 20px;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    {% if messages %}
+      <div class="messages">
+        {% for message in messages %}
+          <p class="message">{{ message }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+    <h1>Payment Proof Submitted</h1>
+    <p>Your activation details have been successfully submitted and are waiting to be reviewed by an admin.</p>
+    <p>Thank you for your patience.</p>
+    <div>
+      <a href="{% url 'login' %}" class="btn">Login</a>
+      <a href="https://wa.me/250780475093?text=Hello%20🌸help🌼%20me%20get%20activated%20" class="btn">Contact Us</a>
+    </div>
+    <div class="contact-info">
+      <p>If your fee review exceeds 24 hours, please click the "Contact Us" button above to get assistance via WhatsApp.</p>
+    </div>
+  </div>
+</body>
+</html>

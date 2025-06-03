@@ -1,0 +1,497 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        body {
+    background-image: url('{% static "images/withdraw.jpeg" %}');
+    background-size: cover;
+    font-family: "Poppins", sans-serif;
+    color: #333;
+  }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stats-card {
+            transition: all 0.3s ease;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .badge {
+            font-size: 0.75rem;
+            padding: 0.35em 0.65em;
+        }
+        
+        .copy-btn:hover .copy-icon {
+            transform: scale(1.1);
+        }
+        
+        .copy-icon {
+            transition: transform 0.2s ease;
+        }
+        
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen">
+        </header>
+
+        <!-- Main Content -->
+        <main class="container mx-auto px-4 py-6">
+            <!-- Welcome Section -->
+            <section class="mb-8">
+                <div class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl p-6 shadow-lg text-white">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                        <div>
+                            <h2 class="text-2xl font-bold mb-2">Welcome back,{{ request.user.username }}!!</h2>
+                            <p class="opacity-90 mb-4">Here's an overview of your account performance and recent activities.</p>
+                            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                                <div class="relative flex-grow">
+                                    <input 
+                                        type="text" 
+                                        id="referralLink" 
+                                        value="{{ referral_link }}" 
+                                        class="form-control" 
+                                        readonly
+                                    >
+                                </div>
+                                <button 
+                                    id="copyButton" 
+                                    class="copy-btn bg-white text-indigo-600 hover:bg-gray-100 font-medium py-2 px-4 rounded-lg flex items-center justify-center space-x-2 transition-all duration-200"
+                                >
+                                    <i class="fas fa-copy copy-icon"></i>
+                                    <span>Copy Link</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mt-4 md:mt-0 flex items-center space-x-2 bg-white bg-opacity-20 backdrop-blur-sm rounded-lg p-3">
+                            <i class="fas fa-gift text-2xl"></i>
+                            <div>
+                                <p class="text-xs text-black opacity-100">Referral Bonus</p>
+                                <p class="font-bold text-black">Earn 10% commission</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Stats Cards -->
+            <section class="mb-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Total Earnings -->
+                    <div class="stats-card bg-white rounded-xl p-6 shadow-sm border-l-4 border-blue-500 hover:shadow-md">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-500 text-sm font-medium">Total Earnings</p>
+                                <h3 class="text-2xl font-bold mt-1">${{ user_profile.total_earnings }}</h3>
+                            </div>
+                            <div class="bg-blue-100 p-3 rounded-lg">
+                                <i class="fas fa-university text-blue-500 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <a href="{% url 'earning_history' %}" class="text-blue-500 text-sm font-medium flex items-center">
+                                View earnings history
+                                <i class="fas fa-chevron-right ml-1 text-xs"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Withdrawals -->
+                    <div class="stats-card bg-white rounded-xl p-6 shadow-sm border-l-4 border-red-500 hover:shadow-md">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-500 text-sm font-medium">Withdrawals</p>
+                                <h3 class="text-2xl font-bold mt-1">${{ user_profile.total_withdrawals }}</h3>
+                            </div>
+                            <div class="bg-red-100 p-3 rounded-lg">
+                                <i class="fas fa-money-bill-wave text-red-500 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <p class="text-gray-400 text-xs">All time withdrawals</p>
+                        </div>
+                    </div>
+
+                    <!-- Expenses -->
+                    <div class="stats-card bg-white rounded-xl p-6 shadow-sm border-l-4 border-purple-500 hover:shadow-md">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-500 text-sm font-medium">Expenses</p>
+                                <h3 class="text-2xl font-bold mt-1">${{ user_profile.total_expenses }}</h3>
+                            </div>
+                            <div class="bg-purple-100 p-3 rounded-lg">
+                                <i class="fas fa-chart-line text-purple-500 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <p class="text-gray-400 text-xs">Used to purchase products</p>
+                        </div>
+                    </div>
+
+                    <!-- Balance -->
+                    <div class="stats-card bg-white rounded-xl p-6 shadow-sm border-l-4 border-green-500 hover:shadow-md">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-500 text-sm font-medium">Balance</p>
+                                <h3 class="text-2xl font-bold mt-1">${{ user_profile.balance }}</h3>
+                            </div>
+                            <div class="bg-green-100 p-3 rounded-lg">
+                                <i class="fas fa-wallet text-green-500 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <a href="{% url 'withdraw' %}" class="text-green-600 text-sm font-medium flex items-center">
+                                Available to withdraw
+                                <i class="fas fa-chevron-right ml-1 text-xs"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bonus Cards -->
+            <section class="mb-8">
+                <h2 class="text-xl font-bold mb-4 text-gray-800">Bonus Breakdown</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Referral Earnings -->
+                    <div class="stats-card bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-6 shadow-sm hover:shadow-md">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-amber-600 text-sm font-medium">Referral Earnings</p>
+                                <h3 class="text-2xl font-bold mt-1">${{ user_profile.referral_earnings }}</h3>
+                            </div>
+                            <div class="bg-amber-100 p-3 rounded-lg">
+                                <i class="fas fa-user-friends text-amber-500 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <p class="text-amber-700 text-xs">From direct and active referrals</p>
+                        </div>
+                    </div>
+
+                    <!-- Retail Bonus -->
+                    <div class="stats-card bg-gradient-to-br from-cyan-50 to-cyan-100 rounded-xl p-6 shadow-sm hover:shadow-md">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-cyan-600 text-sm font-medium">Retail Bonus</p>
+                                <h3 class="text-2xl font-bold mt-1">${{ user_profile.retail_bonus }}</h3>
+                            </div>
+                            <div class="bg-cyan-100 p-3 rounded-lg">
+                                <i class="fas fa-shopping-cart text-cyan-500 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <p class="text-cyan-700 text-xs">From cashback and purchases</p>
+                        </div>
+                    </div>
+
+                    <!-- Leadership Bonus -->
+                    <div class="stats-card bg-gradient-to-br from-pink-50 to-pink-100 rounded-xl p-6 shadow-sm hover:shadow-md">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-pink-600 text-sm font-medium">Leadership Bonus</p>
+                                <h3 class="text-2xl font-bold mt-1">${{ user_profile.leadership_bonus }}</h3>
+                            </div>
+                            <div class="bg-pink-100 p-3 rounded-lg">
+                                <i class="fas fa-crown text-pink-500 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <p class="text-pink-700 text-xs">From ranks and achievements</p>
+                        </div>
+                    </div>
+
+                    <!-- Matching Bonus -->
+                    <div class="stats-card bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 shadow-sm hover:shadow-md">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-green-600 text-sm font-medium">Matching Bonus</p>
+                                <h3 class="text-2xl font-bold mt-1">${{ user_profile.matching_bonus }}</h3>
+                            </div>
+                            <div class="bg-green-100 p-3 rounded-lg">
+                                <i class="fas fa-handshake text-green-500 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <p class="text-green-700 text-xs">From matching pairs (left & right)</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Network and Account Info -->
+            <section class="mb-8">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Network Overview -->
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-lg font-bold text-gray-800">
+                                <i class="fas fa-network-wired text-blue-500 mr-2"></i>
+                                Network Overview
+                            </h2>
+                            <a href="#" class="text-blue-500 text-sm font-medium">View all</a>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center">
+                                    <i class="fas fa-user-friends text-blue-400 mr-3"></i>
+                                    <span class="font-medium">Direct Referrals</span>
+                                </div>
+                                <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">{{ direct_referrals_count }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center">
+                                    <i class="fas fa-arrow-left text-green-400 mr-3"></i>
+                                    <span class="font-medium">Left Referrals</span>
+                                </div>
+                                <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">{{ left_total }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center">
+                                    <i class="fas fa-arrow-right text-red-400 mr-3"></i>
+                                    <span class="font-medium">Right Referrals</span>
+                                </div>
+                                <span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full">{{ right_total }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center">
+                                    <i class="fas fa-users text-indigo-400 mr-3"></i>
+                                    <span class="font-medium">Total Downlines</span>
+                                </div>
+                                <span class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded-full">{{ total_downlines }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Account Insights -->
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-lg font-bold text-gray-800">
+                                <i class="fas fa-info-circle text-purple-500 mr-2"></i>
+                                Account Insights
+                            </h2>
+                            <a href="#" class="text-purple-500 text-sm font-medium">Edit profile</a>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center">
+                                    <i class="fas fa-check-circle text-green-400 mr-3"></i>
+                                    <span class="font-medium">Activation Status</span>
+                                </div>
+                                <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">{{ activation_status|title }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center">
+                                    <i class="fas fa-star text-yellow-400 mr-3"></i>
+                                    <span class="font-medium">Rank</span>
+                                </div>
+                                <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full">{{ user_profile.rank }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center">
+                                    <i class="fas fa-clock text-blue-400 mr-3"></i>
+                                    <span class="font-medium">Last Login</span>
+                                </div>
+                                <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">{{ last_login|date:"M d, Y H:i" }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center">
+                                    <i class="fas fa-calendar-alt text-purple-400 mr-3"></i>
+                                    <span class="font-medium">Member Since</span>
+                                </div>
+                                <span class="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded-full">{{ date_joined|date:"M d, Y" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Income Chart -->
+            <section class="mb-8">
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-bold text-gray-800">
+                            <i class="fas fa-chart-bar text-indigo-500 mr-2"></i>
+                            Income Statistics
+                        </h2>
+                        <div class="flex space-x-2">
+                            <button class="text-xs bg-indigo-50 text-indigo-600 px-3 py-1 rounded-lg">Monthly</button>
+                            <button class="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-lg">Yearly</button>
+                        </div>
+                    </div>
+                    <div class="h-80">
+                        <canvas id="incomeChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Latest News -->
+            <section>
+                <div class="bg-gradient-to-r from-red-500 to-pink-600 rounded-xl shadow-lg overflow-hidden">
+                    <div class="p-4 text-white">
+                        <div class="flex items-center">
+                            <i class="fas fa-bullhorn text-xl mr-2"></i>
+                            <h2 class="text-lg font-bold">Latest News & Updates</h2>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6">
+                        <div class="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden">
+                            <iframe 
+                                class="w-full h-64 md:h-96" 
+                                src="{{ news.youtube_video_url }}" 
+                                title="YouTube video player" 
+                                frameborder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                        <div class="mt-4">
+                            <h3 class="text-lg font-bold text-gray-800">New Investment Opportunities Available</h3>
+                            <p class="text-gray-600 mt-2">We're excited to announce new investment packages with higher returns and lower risk profiles. Watch the video to learn more about these exciting opportunities.</p>
+                            <div class="mt-4 flex items-center text-sm text-gray-500">
+                                <i class="fas fa-calendar-alt mr-1"></i>
+                                <span>Posted on June 15, 2023</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Copy referral link functionality
+        document.getElementById('copyButton').addEventListener('click', function() {
+            const referralLink = document.getElementById('referralLink');
+            referralLink.select();
+            document.execCommand('copy');
+            
+            // Change button text temporarily
+            const button = this;
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check copy-icon"></i><span>Copied!</span>';
+            
+            setTimeout(function() {
+                button.innerHTML = originalText;
+            }, 2000);
+        });
+
+        // Initialize chart
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('incomeChart').getContext('2d');
+            const incomeChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Earnings', 'Withdrawals', 'Expenses', 'Balance', 'Referral', 'Retail', 'Leadership', 'Matching'],
+                    datasets: [{
+                        label: 'Amount in $',
+                        data: [
+                            {{ user_profile.total_earnings }},
+                            {{ user_profile.total_withdrawals }},
+                            {{ user_profile.total_expenses }},
+                            {{ user_profile.balance }},
+                            {{ user_profile.referral_earnings }},
+                            {{ user_profile.retail_bonus }},
+                            {{ user_profile.leadership_bonus }},
+                            {{ user_profile.matching_bonus }}],
+                        backgroundColor: [
+                            'rgba(54, 162, 235, 0.7)',
+                            'rgba(255, 99, 132, 0.7)',
+                            'rgba(75, 192, 192, 0.7)',
+                            'rgba(153, 102, 255, 0.7)',
+                            'rgba(255, 159, 64, 0.7)',
+                            'rgba(23, 162, 184, 0.7)',
+                            'rgba(220, 53, 69, 0.7)',
+                            'rgba(40, 167, 69, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)',
+                            'rgba(23, 162, 184, 1)',
+                            'rgba(220, 53, 69, 1)',
+                            'rgba(40, 167, 69, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleFont: {
+                                size: 14,
+                                family: "'Poppins', sans-serif"
+                            },
+                            bodyFont: {
+                                size: 12,
+                                family: "'Poppins', sans-serif"
+                            },
+                            padding: 12,
+                            cornerRadius: 4
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+{% endblock %}

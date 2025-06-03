@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+  <div class="row align-items-center">
+    <!-- Product Image -->
+    <div class="col-md-6 mb-4">
+      <div class="product-image-wrapper border rounded shadow-sm overflow-hidden">
+        <img src="{{ product.image.url }}" class="img-fluid" alt="{{ product.name }}">
+      </div>
+    </div>
+    <!-- Product Details -->
+    <div class="col-md-6">
+      <h1 class="product-title mb-3">
+        <i class="fas fa-box-open me-2"></i> {{ product.name }}
+      </h1>
+      <h3 class="product-price text-success mb-3">
+        <i class="fas fa-dollar-sign me-1"></i> ${{ product.price }}
+      </h3>
+      <p class="product-description mb-3">
+        {{ product.description }}
+      </p>
+      <p class="product-category mb-2">
+        <i class="fas fa-tag me-1"></i> Category: <strong>{{ product.category.name }}</strong>
+      </p>
+      <p class="product-stock mb-4">
+        <i class="fas fa-warehouse me-1"></i> Stock: <strong>{{ product.stock_quantity }}</strong>
+      </p>
+      <div class="d-flex gap-3">
+        <a href="{% url 'product_list' %}" class="btn btn-outline-secondary">
+          <i class="fas fa-arrow-left me-1"></i> Back to Products
+        </a>
+        <a href="{% url 'payment_page' product_id=product_id %}" class="btn btn-primary">
+          <i class="fas fa-shopping-cart me-1"></i> Order Now
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  body {
+    background: linear-gradient(135deg, #000, #243203);
+    font-family: 'Arial', sans-serif;
+    color: #fff;
+  }
+  .container {
+    max-width: 1200px;
+  }
+  .product-image-wrapper {
+    background: #fff;
+    padding: 1rem;
+    box-shadow: 0 4px 8px rgba(67, 6, 73, 0.15);
+  }
+  .product-image-wrapper img {
+    transition: transform 0.3s ease;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+  .product-image-wrapper:hover img {
+    transform: scale(1.05);
+  }
+  .product-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+  }
+  .product-price {
+    font-size: 2rem;
+    font-weight: bold;
+  }
+  .product-description {
+    font-size: 1.1rem;
+    line-height: 1.5;
+  }
+  .product-category, .product-stock {
+    font-size: 1rem;
+  }
+  a.btn {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  a.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  }
+</style>
+{% endblock %}

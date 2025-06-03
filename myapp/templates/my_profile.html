@@ -1,0 +1,249 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Profile{% endblock %}
+
+{% block extra_css %}{% endblock %}
+{% block content %}
+<div class="container my-5 p-5">
+  <h1 class="text-center mb-4">My Profile</h1>
+  <div class="row justify-content-center align-items-center">
+    <!-- Sidebar: Profile Overview -->
+    <div class="col-md-4 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <i class="fas fa-user-circle me-2"></i> Profile Overview
+        </div>
+        <div class="card-body">
+          <h4 class="card-title">
+            <i class="fas fa-user me-2"></i>{{ user.username }}
+          </h4>
+          <p>
+            <i class="fas fa-envelope me-2"></i>
+            <strong>Email:</strong> {{ user.email }}
+          </p>
+          <p>
+            <i class="fas fa-phone-alt me-2"></i>
+            <strong>Phone:</strong> {{ user.phone_number }}
+          </p>
+          <p>
+            <i class="fas fa-info-circle me-2"></i>
+            <strong>Status:</strong> {{ user.get_status_display }}
+          </p>
+          <p>
+            <i class="fas fa-map-marker-alt me-2"></i>
+            <strong>Country:</strong> {{ user.get_country_display }}
+          </p>
+          <p>
+            <i class="fas fa-calendar-alt me-2"></i>
+            <strong>Date Joined:</strong> {{ user.date_joined|date:"F j, Y" }}
+          </p>
+          <p>
+            <i class="fas fa-exclamation-circle me-2"></i>
+            <strong>Maintenance Due:</strong>
+            {% if user.maintenance_due_date %}
+              <span class="badge bg-warning text-dark">
+                {{ user.maintenance_due_date|date:"F j, Y" }}
+              </span>
+            {% else %}
+              Not Set
+            {% endif %}
+          </p>
+          <p>
+            <a href="{% url 'maintenance_fee' %}" class="text-decoration-none text-muted">
+              <i class="fas fa-hand-pointer me-1"></i> click here to Maintain for Next Month
+            </a>
+          </p>
+          <hr>
+          <p>
+            <i class="fas fa-award me-2"></i>
+            <strong>RANK:</strong>
+            <span style="background-color: green; padding: 5px; border-radius: 5px; color: white;">
+              {{ user_profile.rank }}
+            </span>
+          </p>
+          <p>
+            <i class="fas fa-dollar-sign me-2"></i>
+            <strong>Balance:</strong>
+            <span class="text-info">${{ user_profile.balance }}</span>
+          </p>
+        </div>
+      </div>
+    </div>
+    <!-- Main Content: Forms -->
+    <div class="col-md-8">
+      <!-- Nav Tabs -->
+      <ul class="nav nav-tabs mb-3" id="profileTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="update-tab" data-bs-toggle="tab" data-bs-target="#update" type="button" role="tab" aria-controls="update" aria-selected="true">
+            <i class="fas fa-pencil-alt me-1"></i> Update Profile
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="password-tab" data-bs-toggle="tab" data-bs-target="#password" type="button" role="tab" aria-controls="password" aria-selected="false">
+            <i class="fas fa-key me-1"></i> Change Password
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="profileTabContent">
+        <!-- Update Profile Form -->
+        <div class="tab-pane fade show active" id="update" role="tabpanel" aria-labelledby="update-tab">
+          <div class="card shadow-sm mb-4">
+            <div class="card-header bg-success text-white">
+              Update Profile Information
+            </div>
+            <div class="card-body">
+              <p class="text-muted mb-3">
+                <small>Please update your username, email, and phone number below.</small>
+              </p>
+              <form method="POST" novalidate>
+                {% csrf_token %}
+                {{ profile_form.non_field_errors }}
+                <div class="mb-3">
+                  <label for="{{ profile_form.username.id_for_label }}" class="form-label">
+                    <i class="fas fa-user me-1"></i> Username
+                  </label>
+                  {{ profile_form.username }}
+                  <div class="text-danger small">
+                    {{ profile_form.username.errors }}
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label for="{{ profile_form.email.id_for_label }}" class="form-label">
+                    <i class="fas fa-envelope me-1"></i> Email
+                  </label>
+                  {{ profile_form.email }}
+                  <div class="text-danger small">
+                    {{ profile_form.email.errors }}
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label for="{{ profile_form.phone_number.id_for_label }}" class="form-label">
+                    <i class="fas fa-phone-alt me-1"></i> Phone Number (this is where withdrawals will be sent)
+                  </label>
+                  {{ profile_form.phone_number }}
+                  <div class="text-danger small">
+                    {{ profile_form.phone_number.errors }}
+                  </div>
+                </div>
+                <button type="submit" name="update_profile" class="btn btn-success">
+                  <i class="fas fa-save me-1"></i> Save Changes
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+        <!-- Change Password Form -->
+        <div class="tab-pane fade" id="password" role="tabpanel" aria-labelledby="password-tab">
+          <div class="card shadow-sm">
+            <div class="card-header bg-warning text-dark">
+              Change Password
+            </div>
+            <div class="card-body">
+              <p class="text-muted mb-3">
+                <small>Enter your current password and choose a new strong password.</small>
+              </p>
+              <form method="POST" novalidate>
+                {% csrf_token %}
+                {{ password_form.non_field_errors }}
+                <div class="mb-3 row">
+                  <label for="{{ password_form.old_password.id_for_label }}" class="col-sm-4 col-form-label">
+                  <i class="fas fa-lock me-1"></i> Current Password
+                  </label>
+                  <div class="col-sm-8">
+                  {{ password_form.old_password }}
+                  <div class="text-danger small">
+                    {{ password_form.old_password.errors }}
+                  </div>
+                  </div>
+                </div>
+                <div class="mb-3 row">
+                  <label for="{{ password_form.new_password1.id_for_label }}" class="col-sm-4 col-form-label">
+                  <i class="fas fa-key me-1"></i> New Password
+                  </label>
+                  <div class="col-sm-8">
+                  {{ password_form.new_password1 }}
+                  <div class="text-danger small">
+                    {{ password_form.new_password1.errors }}
+                  </div>
+                  </div>
+                </div>
+                <div class="mb-3 row">
+                  <label for="{{ password_form.new_password2.id_for_label }}" class="col-sm-4 col-form-label">
+                  <i class="fas fa-check-circle me-1"></i> Confirm New Password
+                  </label>
+                  <div class="col-sm-8">
+                  {{ password_form.new_password2 }}
+                  <div class="text-danger small">
+                    {{ password_form.new_password2.errors }}
+                  </div>
+                  </div>
+                </div>
+                <button type="submit" name="change_password" class="btn btn-warning">
+                  <i class="fas fa-check me-1"></i> Update Password
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Django Messages -->
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show mt-3" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Custom Styling -->
+<style>
+  /* Background and overlay styling */
+  body {
+    background-image: url('{% static "images/myprofile1.jpg" %}');
+    background-size: cover;
+    font-family: "Poppins", sans-serif;
+    color: #333;
+  }
+  .card {
+    border-radius: 15px;
+  }
+  .nav-tabs .nav-link {
+    font-weight: 500;
+    font-size: 1rem;
+  }
+  .container {
+    background-color:rgba(247, 247, 247, 0.43);
+    padding: 20px;
+    border-radius: 50px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  .container.my-5 {
+    margin-top: 50px;
+    margin-bottom: 50px;
+  }
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+  }
+  .col-md-4, .col-md-8 {
+    padding: 20px;
+  }
+  .col-md-4 {
+    background-color: #fff;
+    border-radius: 50px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  .col-md-8 {
+    background-color: #f7f7f7;
+    border-radius: 50px;
+    padding: 40px;
+  }
+</style>
+{% endblock %}

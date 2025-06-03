@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Activation Page</title>
+  <style>
+    body {
+      background-color: #0f0f0f;
+      color: #00ff00;
+      font-family: 'Courier New', Courier, monospace;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    h1 {
+      text-align: center;
+      text-decoration: underline;
+    }
+    /* Container for form */
+    .form-container {
+      background-color: #1a1a1a;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #00ff00;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    input[type="text"], input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #00ff00;
+      border-radius: 5px;
+      background-color: #0f0f0f;
+      color: #00ff00;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      background-color: #00ff00;
+      color: #0f0f0f;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #00cc00;
+    }
+    /* Tooltip CSS */
+    .tooltip {
+      position: relative;
+      display: inline-block;
+    }
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 220px;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -110px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .tooltip:hover .tooltiptext,
+    .tooltip:focus .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
+    /* Message container styling */
+    .message-container {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 999;
+      max-width: 400px;
+      width: 90%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .message-box {
+      background-color: #1a1a1a;
+      color: #00ff00;
+      border: 1px solid #00ff00;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      box-shadow: 0 0 5px #00ff00;
+      text-align: center;
+      width: 100%;
+    }
+  </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.querySelector('form');
+      form.addEventListener('submit', function(event) {
+        const fullName = document.getElementById('full_name').value;
+        const phoneNumber = document.getElementById('phone_number').value;
+        if (!fullName || !phoneNumber) {
+          alert('Please fill in all required fields.');
+          event.preventDefault();
+        }
+      });
+    });
+  </script>
+</head>
+<body>
+
+  <!-- Django Messages -->
+  {% if messages %}
+    <div class="message-container">
+      {% for message in messages %}
+        <div class="message-box">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%;">
+    <!-- Info Icon with Tooltip -->
+    <div style="text-align: center; margin-bottom: 20px;">
+      <span class="tooltip">
+        <a href="#" tabindex="0" style="color: #00ff00; text-decoration: none;">
+          &#9432; How to pay
+        </a>
+        <span class="tooltiptext">Payment should be sent to +250780475093</span>
+      </span>
+    </div>
+    
+    <form method="POST" enctype="multipart/form-data" class="form-container">
+      {% csrf_token %}
+      <label for="full_name">Full Name:</label>
+      <input type="text" id="full_name" name="full_name" required>
+  
+      <label for="phone_number">Phone Number:</label>
+      <input type="text" id="phone_number" name="phone_number" required>
+  
+      <label for="proof_image">Proof Image:</label>
+      <input type="file" id="proof_image" name="proof_image" accept="image/*" required>
+  
+      <button type="submit">Submit proof of payment</button>
+    </form>
+  </div>
+</body>
+</html>

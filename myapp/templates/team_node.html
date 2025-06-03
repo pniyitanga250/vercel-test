@@ -1,0 +1,45 @@
+<div class="tree-node">
+    <div class="node-info">
+        <!-- Wrap the username in an anchor tag -->
+        <a href="?sponsor_id={{ profile.user.id }}">
+            <strong>{{ profile.user.username }}</strong>
+        </a>
+        <br>
+        <small>
+            {% if profile.user.status == 'active' %}
+                <span style="color: green;">
+                    Active <i class="fas fa-check-circle status-icon"></i>
+                </span>
+            {% else %}
+                <span style="color: red;">
+                    Inactive <i class="fas fa-times-circle status-icon"></i>
+                </span>
+            {% endif %}
+            <br>
+            Generation: {{ generation }}
+        </small>
+    </div>
+
+    {% if generation < 6 %}
+    <div class="children">
+        <div class="child">
+            {% if profile.left_leg %}
+                {% include "team_node.html" with profile=profile.left_leg generation=generation|add:"1" %}
+            {% else %}
+                <div class="empty-node">Empty</div>
+            {% endif %}
+        </div>
+        <div class="child">
+            {% if profile.right_leg %}
+                {% include "team_node.html" with profile=profile.right_leg generation=generation|add:"1" %}
+            {% else %}
+                <div class="empty-node">Empty</div>
+            {% endif %}
+        </div>
+    </div>
+    {% else %}
+    <div class="children">
+        <div class="empty-node">Max Generation</div>
+    </div>
+    {% endif %}
+</div>

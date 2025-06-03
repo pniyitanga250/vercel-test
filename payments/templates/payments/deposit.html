@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Deposit Funds{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Background and overlay styling */
+  body {
+    background-image: url('{% static "images/deposit.jpg" %}');
+    background-size: cover;
+    font-family: "Poppins", sans-serif;
+    color: #333;
+  }
+  .full-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+  }
+  .content-overlay {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 0.5rem;
+    padding: 30px;
+    margin-top: 30px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  }
+  .navbar {
+    z-index: 1050 !important;
+  }
+</style>
+{% endblock extra_css %}
+
+{% block content %}
+<div class="full-bg"></div>
+<div class="container mt-5" style="max-width: 800px; margin: auto;">
+  <div class="row justify-content-center">
+    <div class="col-md-10 content-overlay">
+      <!-- Deposit Form Card -->
+      <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-primary text-white" style="border-radius: 0.5rem;">
+          <h3 class="mb-0">
+            Make a Deposit
+            <a href="#" class="text-white ms-3" data-bs-toggle="tooltip" data-bs-trigger="hover focus" title="deposits should be sent to +250789869372 (Names: Aline Ishimwe)">
+              <i class="fas fa-info-circle"></i> How to deposit
+            </a>
+          </h3>
+        </div>
+        <div class="card-body">
+          <form method="post" enctype="multipart/form-data" id="depositForm">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="payment_method" class="form-label">Deposit Method:</label>
+              <select name="payment_method" id="payment_method" class="form-select" required>
+                <option value="">Select method</option>
+                <option value="momo_pay">MoMo Pay</option>
+                <option value="tigo_cash">Tigo Cash</option>
+                <option value="bank_transfer">Bank Transfer</option>
+              </select>
+            </div>
+            <div class="mb-3" id="mobile_number_field" style="display:none;">
+              <label for="mobile_number" class="form-label">Mobile Number (used for payment):</label>
+              <input type="text" name="mobile_number" id="mobile_number" class="form-control">
+            </div>
+            <div class="mb-3" id="bank_account_field" style="display:none;">
+              <label for="bank_account" class="form-label">Bank Account Number:</label>
+              <input type="text" name="bank_account" id="bank_account" class="form-control">
+            </div>
+            <div class="mb-3">
+              <label for="full_name" class="form-label">Full Name:</label>
+              <input type="text" name="full_name" id="full_name" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label for="amount" class="form-label">Amount to Deposit:</label>
+              <input type="number" name="amount" id="amount" class="form-control" step="0.01" required>
+            </div>
+            <div class="mb-3">
+              <label for="proof_of_payment" class="form-label">Proof of Payment (Screenshot):</label>
+              <input type="file" name="proof_of_payment" id="proof_of_payment" class="form-control" accept="image/*" required>
+            </div>
+            <button type="submit" class="btn btn-success">Submit Deposit</button>
+          </form>
+        </div>
+      </div>
+      
+      <!-- Deposit History Card -->
+      <div class="card shadow-sm">
+        <div class="card-header bg-secondary text-white">
+          <h4 class="mb-0">Deposit History</h4>
+        </div>
+        <div class="card-body">
+          {% if deposits %}
+            <div class="table-responsive" style="border-radius: 0.5rem; overflow: hidden;">
+              <table class="table table-bordered table-striped" style="border-radius: 0.5rem;">
+                <thead>
+                  <tr>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Method</th>
+                    <th>Submitted At</th>
+                    <th>Processed At</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for d in deposits %}
+                    <tr>
+                      <td>${{ d.amount }}</td>
+                      <td>
+                        {% if d.status == "pending" %}
+                          <span class="badge bg-warning text-dark">{{ d.get_status_display }}</span>
+                        {% elif d.status == "approved" %}
+                          <span class="badge bg-success">{{ d.get_status_display }}</span>
+                        {% elif d.status == "denied" %}
+                          <span class="badge bg-danger">{{ d.get_status_display }}</span>
+                        {% else %}
+                          {{ d.get_status_display }}
+                        {% endif %}
+                      </td>
+                      <td>{{ d.get_payment_method_display }}</td>
+                      <td>{{ d.created_at|date:"Y-m-d H:i" }}</td>
+                      <td>
+                        {% if d.updated_at and d.status != "pending" %}
+                          {{ d.updated_at|date:"Y-m-d H:i" }}
+                        {% else %}
+                          -
+                        {% endif %}
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <p class="text-muted">No deposit history available.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% block extra_js %}
+<script>
+  document.addEventListener("DOMContentLoaded", function(){
+    const paymentMethodSelect = document.getElementById('payment_method');
+    const mobileNumberField = document.getElementById('mobile_number_field');
+    const bankAccountField = document.getElementById('bank_account_field');
+
+    paymentMethodSelect.addEventListener('change', function(){
+      const selected = this.value;
+      if(selected === 'momo_pay' || selected === 'tigo_cash'){
+        mobileNumberField.style.display = 'block';
+        bankAccountField.style.display = 'none';
+      } else if(selected === 'bank_transfer'){
+        bankAccountField.style.display = 'block';
+        mobileNumberField.style.display = 'none';
+      } else {
+        mobileNumberField.style.display = 'none';
+        bankAccountField.style.display = 'none';
+      }
+    });
+
+    // Initialize Bootstrap tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+  });
+</script>
+{% endblock extra_js %}
+{% endblock %}
