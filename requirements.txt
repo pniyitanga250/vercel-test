@@ -1,2 +1,7 @@
 Django>=5.2.1
 whitenoise
+psycopg2-binary
+pillow
+python-decouple
+
+psycopg2-binary
