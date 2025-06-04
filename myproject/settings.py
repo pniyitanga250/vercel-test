@@ -84,11 +84,11 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'neondb',
-        'USER': 'neondb_owner',
-        'PASSWORD': 'npg_NOkgfLm54BEt',
-        'HOST': 'ep-withered-term-a4kp9wo6-pooler.us-east-1.aws.neon.tech',
-        'PORT': '5432',
+        'NAME': 'postgres',
+        'USER': 'postgres.cfzhjyeromtdudayqfzu',
+        'PASSWORD': 'vercel99database99!!',
+        'HOST': 'aws-0-us-east-1.pooler.supabase.com',
+        'PORT': '6543',
         'OPTIONS': {
             'sslmode': 'require',
         },
