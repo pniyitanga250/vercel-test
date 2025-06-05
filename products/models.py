@@ -32,9 +32,6 @@ class Product(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
-        media_root = settings.MEDIA_ROOT
-        if not os.path.exists(media_root):
-            os.makedirs(media_root)
         super().save(*args, **kwargs)
 
     def __str__(self):
