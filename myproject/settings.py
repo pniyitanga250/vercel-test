@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'products',
     'payments',
     'tools_and_opps',
+    'storages',  # For handling file storage
     
 ]
 
