@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import os
 from decouple import config
+from storages.backends.s3boto3 import S3Boto3Storage
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -149,8 +150,8 @@ MEDIA_URL = 'https://cfzhjyeromtdudayqfzu.supabase.co/storage/v1/object/public/m
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
-AWS_ACCESS_KEY_ID = 'ab68fc13d73be48fd3d458f99af6c0be'
-AWS_SECRET_ACCESS_KEY = '7250074f929130bf385b7ac81252e3104e3ed4b61fcb090d5465f2f208ca58f5'
+AWS_ACCESS_KEY_ID = '9565c79cd3cf30e88b5ca5b9788ab923'
+AWS_SECRET_ACCESS_KEY = '6ebccd0d6deb389dea1c54359842b573728a7c3390788e4cd67b602491218dc2'
 AWS_STORAGE_BUCKET_NAME = 'media'
 AWS_S3_ENDPOINT_URL = 'https://cfzhjyeromtdudayqfzu.supabase.co/storage/v1/s3'
 AWS_S3_ADDRESSING_STYLE = "path"
