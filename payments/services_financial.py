@@ -1,27 +1,26 @@
 from decimal import Decimal
-from django.db.models import Sum
+from django.db.models import Sum, F
 from django.conf import settings
 from payments.models import Commission, Payment, Withdrawal, Deposit
 from myapp.models import UserProfile
 
-def process_withdrawal_reversal(withdrawal):
-    """Handle withdrawal reversal by refunding user balance"""
-    if withdrawal.status == 'completed':
-        withdrawal.user.balance += withdrawal.amount
-        withdrawal.user.save()
-        withdrawal.status = 'reversed'
-        withdrawal.save()
-        return True
+def process_withdrawal_reversal(new_withdrawal, old_withdrawal):
+    """Refund the user's balance if a withdrawal is declined."""
+    if new_withdrawal.status == 'declined' and old_withdrawal.status != 'declined':
+        updated = UserProfile.objects.filter(user=new_withdrawal.user).update(
+            balance=F('balance') + new_withdrawal.amount,
+            total_withdrawals=F('total_withdrawals') - new_withdrawal.amount,
+        )
+        return bool(updated)
     return False
 
-def process_deposit_addition(deposit):
-    """Process successful deposit by adding to user balance"""
-    if deposit.status == 'pending':
-        deposit.user.balance += deposit.amount
-        deposit.user.save()
-        deposit.status = 'completed'
-        deposit.save()
-        return True
+def process_deposit_addition(new_deposit, old_deposit):
+    """Add deposit amount to the user's balance once approved."""
+    if new_deposit.status == 'approved' and old_deposit.status != 'approved':
+        updated = UserProfile.objects.filter(user=new_deposit.user).update(
+            balance=F('balance') + new_deposit.amount
+        )
+        return bool(updated)
     return False
 
 class CommissionService:
