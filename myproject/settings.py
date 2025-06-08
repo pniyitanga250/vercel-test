@@ -145,13 +145,3 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'myapp.User'
 MEDIA_URL = 'https://cfzhjyeromtdudayqfzu.supabase.co/storage/v1/object/public/media/'
-# Remove local MEDIA_ROOT since using Supabase storage
-# MEDIA_ROOT = '/tmp/media'
-
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-
-AWS_ACCESS_KEY_ID = '9565c79cd3cf30e88b5ca5b9788ab923'
-AWS_SECRET_ACCESS_KEY = '6ebccd0d6deb389dea1c54359842b573728a7c3390788e4cd67b602491218dc2'
-AWS_STORAGE_BUCKET_NAME = 'media'
-AWS_S3_ENDPOINT_URL = 'https://cfzhjyeromtdudayqfzu.supabase.co/storage/v1/s3'
-AWS_S3_ADDRESSING_STYLE = "path"
